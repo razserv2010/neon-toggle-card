@@ -1,4 +1,4 @@
-/* neon-toggle-card.js v1.1.0 */
+/* neon-toggle-card.js v1.1.1 */
 (() => {
   const CARD_TAG = "neon-toggle-card";
   if (customElements.get(CARD_TAG)) {
@@ -27,12 +27,14 @@
         shadow_intensity: config.shadow_intensity ?? 0.6,
         animate:  config.animate  ?? true,
         tap_action: config.tap_action ?? "toggle",
-        // חדש: ריווח ומיקום
-        padding_v: config.padding_v ?? 0,     // px
-        padding_h: config.padding_h ?? 0,     // px
-        justify:   config.justify   ?? "space-between", // left/center/right/space-between
-        align:     config.align     ?? "center",        // top/center/bottom
-        gap:       config.gap       ?? 16,              // px
+        // ריווח ומיקום
+        margin_v: config.margin_v ?? 0,   // ריווח חיצוני אנכי
+        margin_h: config.margin_h ?? 0,   // ריווח חיצוני אופקי
+        justify:  config.justify  ?? "space-between", // left/center/right/space-between
+        align:    config.align    ?? "center",        // top/center/bottom
+        gap:      config.gap      ?? 16,              // מרווח בין טקסט לעיגול
+        // טקסט
+        font_size: config.font_size ?? null,          // אם null → מחושב אוטומטית
         // entity
         entity:   config.entity,
       };
@@ -90,12 +92,10 @@
         :host { display:block; }
         .wrap {
           position: relative;
-          background: var(--ha-card-background, #000); /* נראה נקי ליד כרטיסים אחרים */
-          background: #000; /* ברירת מחדל: שחור ניאון */
+          background: #000;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 0 26px;
           user-select: none;
           cursor: pointer;
           transition: transform .08s ease;
@@ -132,15 +132,17 @@
       this._card.style.setProperty("--glow", this._rgba(this._config.glow_color,0.9));
       this._card.style.setProperty("--glowOff", "rgba(176,176,176,.6)");
 
-      // חדש: ריווח/מיקום/מרווח פנימי
-      this._card.style.padding = `${this._config.padding_v}px ${this._config.padding_h}px`;
+      // חדש: margin/gap/margin
+      this._card.style.margin = `${this._config.margin_v}px ${this._config.margin_h}px`;
       this._card.style.justifyContent = this._mapJustify(this._config.justify);
       this._card.style.alignItems = this._mapAlign(this._config.align);
       this._card.style.gap = `${this._config.gap}px`;
 
       this._label = document.createElement("div");
       this._label.className = "label";
-      this._label.style.fontSize = Math.round(this._config.height*0.36) + "px";
+      this._label.style.fontSize = this._config.font_size
+        ? `${this._config.font_size}px`
+        : Math.round(this._config.height*0.36) + "px";
 
       this._circle = document.createElement("div");
       this._circle.className = "circle";
@@ -154,7 +156,6 @@
         if (e.key === " " || e.key === "Enter") { e.preventDefault(); this._handleTap(); }
       });
 
-      // ברירת מחדל: label ואז circle (כמו בתמונה שלך)
       this._card.appendChild(this._label);
       this._card.appendChild(this._circle);
       this._root.appendChild(this._card);
@@ -190,10 +191,10 @@
   window.customCards.push({
     type: CARD_TAG,
     name: "Neon Toggle Card",
-    description: "טוגל ניאון עם ON/OFF, שליטה בריווח ומיקום.",
+    description: "טוגל ניאון עם ON/OFF, שליטה במרווח חיצוני וגודל טקסט.",
   });
-  window.NEON_TOGGLE_CARD_LOADED = "1.1.0";
-  console.info(`%c Neon Toggle Card %c v1.1.0 `,
+  window.NEON_TOGGLE_CARD_LOADED = "1.1.1";
+  console.info(`%c Neon Toggle Card %c v1.1.1 `,
     "background:#00d9ff;color:#000;padding:2px 6px;border-radius:4px",
     "background:#222;color:#fff;padding:2px 6px;border-radius:4px");
 })();
